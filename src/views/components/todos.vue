@@ -1,77 +1,65 @@
 <template>
-<div class="vue-wrapper">
-  <input
-    class="new-todo"
-    autofocus autocomplete="off"
-    placeholder="What needs to be done?"
-    v-model="newTodo"
-    @keyup.enter="addTodo"
-  >
+<div class="card">
+  <new-todo
+    :todo-title="newTodoTitle"
+    @add-todo="addTodo"
+    @input-focus="endEditing"
+  ></new-todo>
 
-  <div>
-    <ul class="todo-list">
-      <li v-for="todo in todos"
-        :key="todo.id"
-        :class="{ completed: todo.completed }"
-      >
-        <span class="todo-field">
-          <input
-            v-if="todo.id === editingId"
-            v-model="todo.title"
-            @keyup.enter="updateEdit"
-            type="text"
-          >
-          <span v-else>{{todo.title}}</span>
-        </span>
-        <span class="tools">
-          <button @click="toggleCompleted(todo)">check</button>
-          <button @click="editTodo(todo)">edit</button>
-          <button @click="removeTodo(todo)">remove</button>
-        </span>
-      </li>
-    </ul>
-  </div>
+  <ul class="todo-list">
+    <todo-term
+      v-for="todo in todos"
+      :key="todo.id"
+      :todo="todo"
+      :isEditing="todo.id === editingId"
+      @toggle-completed="toggleCompleted"
+      @edit-todo="editTodo"
+      @end-editing="endEditing"
+      @remove-todo="removeTodo"
+    ></todo-term>
+  </ul>
 </div>
 </template>
 
 <script>
+import NewTodo from './newTodo.vue';
+import TodoTerm from './todoTerm.vue';
 
 export default {
 /* eslint-disable no-param-reassign */
-// app initial state
+  components: {
+    NewTodo,
+    TodoTerm,
+  },
+
+  // app initial state
   data() {
     return {
       todos: [],
-      newTodo: '',
+      newTodoTitle: '',
       editingId: null,
     };
   },
 
   // methods that implement data logic.
-  // note there's no DOM manipulation here at all.
   methods: {
     toggleCompleted(todo) {
       todo.completed = !todo.completed;
     },
 
-    addTodo() {
-      const value = this.newTodo && this.newTodo.trim();
-      if (!value) {
-        return;
-      }
+    addTodo(title) {
       this.todos.push({
         id: Date.now(),
-        title: value,
+        title,
         completed: false,
       });
-      this.newTodo = '';
     },
 
     editTodo(todo) {
       this.editingId = todo.id;
     },
 
-    updateEdit() {
+    endEditing() {
       this.editingId = null;
     },
 
@@ -84,18 +72,15 @@ export default {
 </script>
 
 <style lang="scss">
-.vue-wrapper {
-  .todo-list {
-    .completed {
-      .todo-field {
-        text-decoration: line-through;
-        color: #68F;
-      }
-
-      input {
-        text-decoration: line-through;
-      }
-    }
-  }
+.card {
+  background: #fff;
+  width: 92%;
+  max-width: 360px;
+  margin: auto;
+  padding: 2em;
+  font-size: 1.25em;
+  box-shadow:
+    2px 3px 9px 2px rgba(0, 0, 0, 0.05),
+    0 8px 48px 0 rgba(0, 0, 0, 0.1);
 }
 </style>
