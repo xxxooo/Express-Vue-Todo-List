@@ -1,6 +1,14 @@
 @import 'normalize.css';
 
 html {
+  font-family:
+    'Helvetica Neue',
+    Helvetica,
+    'PingFang TC',
+    'Hiragino Sans TC',
+    'Microsoft JhengHei',
+    'Microsoft YaHei',
+    sans-serif;
   font-size: 2vw;
 }
 
@@ -14,9 +22,8 @@ body {
 
 .title-field {
   h1 {
-    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
     font-weight: 100;
-    font-size: 5em;
+    font-size: 4em;
     text-align: center;
   }
 }

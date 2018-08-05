@@ -74,13 +74,18 @@ export default {
 <style lang="scss">
 .card {
   background: #fff;
-  width: 92%;
-  max-width: 360px;
+  width: 48%;
+  max-width: 720px;
   margin: auto;
   padding: 2em;
-  font-size: 1.25em;
   box-shadow:
     2px 3px 9px 2px rgba(0, 0, 0, 0.05),
     0 8px 48px 0 rgba(0, 0, 0, 0.1);
+}
+
+.todo-list {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
 }
 </style>

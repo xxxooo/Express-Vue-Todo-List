@@ -40,6 +40,7 @@ module.exports = {
       {
         test: /\.(sa|sc|c)ss$/,
         use: [
+          'css-hot-loader',
           {
             loader: MiniCssExtractPlugin.loader,
             options: {

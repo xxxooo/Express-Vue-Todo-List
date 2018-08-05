@@ -38,8 +38,9 @@ export default {
 
 <style lang="scss">
 .new-todo-field {
-  padding: 0 1em;
+  padding: 0 1em 1px;
   border-bottom: 1px solid #d9d9d9;
+  margin-bottom: 0.5em;
 
   .new-todo {
     width: 100%;
