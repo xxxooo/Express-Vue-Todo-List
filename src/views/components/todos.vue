@@ -3,7 +3,7 @@
   <new-todo
     :todo-title="newTodoTitle"
     @add-todo="addTodo"
-    @input-focus="endEditing"
+    @input-focus="updateTodo"
   ></new-todo>
 
   <ul class="todo-list">
@@ -14,7 +14,7 @@
       :isEditing="todo.id === editingId"
       @toggle-completed="toggleCompleted"
       @edit-todo="editTodo"
-      @end-editing="endEditing"
+      @end-editing="updateTodo"
       @remove-todo="removeTodo"
     ></todo-term>
   </ul>
@@ -22,6 +22,7 @@
 </template>
 
 <script>
+import axios from 'axios';
 import NewTodo from './newTodo.vue';
 import TodoTerm from './todoTerm.vue';
 
@@ -44,30 +45,72 @@ export default {
   // methods that implement data logic.
   methods: {
     toggleCompleted(todo) {
-      todo.completed = !todo.completed;
+      // update todo if is editing
+      if (this.editingId) this.updateTodo();
+
+      axios
+        .put(`/api/todos/${todo.id}`, {
+          completed: !todo.completed,
+        })
+        .then((response) => {
+          todo.completed = !todo.completed;
+        })
+        .catch(this.handleError);
     },
 
     addTodo(title) {
-      this.todos.push({
-        id: Date.now(),
-        title,
-        completed: false,
-      });
+      axios
+        .post('/api/todos', {
+          title,
+          completed: false,
+          creator: navigator.userAgent,
+        })
+        .then((response) => {
+          this.todos.push(response.data);
+        })
+        .catch(this.handleError);
     },
 
     editTodo(todo) {
       this.editingId = todo.id;
     },
 
-    endEditing() {
-      this.editingId = null;
+    updateTodo() {
+      if (this.editingId) {
+        const todo = this.todos.find(n => n.id === this.editingId);
+        todo.title = todo.title.trim();
+
+        axios
+          .put(`/api/todos/${todo.id}`, {
+            title: todo.title,
+            completed: todo.completed,
+            creator: navigator.userAgent,
+          })
+          .then((response) => {
+            this.editingId = null;
+          })
+          .catch(this.handleError);
+      }
     },
 
     removeTodo(todo) {
       const idx = this.todos.indexOf(todo);
       this.todos.splice(idx, 1);
     },
+
+    handleError(error) {
+      console.log(error);
+    }
   },
+
+  mounted() {
+    axios
+      .get('/api/todos')
+      .then(response => {
+        this.todos = response.data;
+      })
+      .catch(this.handleError);
+  }
 };
 </script>
 

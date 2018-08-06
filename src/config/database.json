@@ -1,0 +1,27 @@
+{
+  "development": {
+    "username": "root",
+    "password": null,
+    "database": "example",
+    "host": "localhost",
+    "dialect": "sqlite",
+    "operatorsAliases": false,
+    "storage": "src/db/development.sqlite"
+  },
+  "test": {
+    "username": "",
+    "password": null,
+    "database": "",
+    "host": "localhost",
+    "dialect": "sqlite",
+    "storage": "src/db/test.sqlite"
+  },
+  "production": {
+    "username": "",
+    "password": null,
+    "database": "",
+    "host": "localhost",
+    "dialect": "sqlite",
+    "storage": "src/db/production.sqlite"
+  }
+}

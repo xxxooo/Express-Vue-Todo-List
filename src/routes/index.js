@@ -1,8 +1,6 @@
-const express = require('express');
+const router = require('express').Router();
 
-const router = express.Router();
-
-/* GET home page. */
+// GET root page
 router.get('/', (req, res) => {
   res.render('index', { title: 'TODO LIST' });
 });
