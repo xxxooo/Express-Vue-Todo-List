@@ -6,6 +6,7 @@
 
 const debug = require('debug')('express-vue-todo-list:server');
 const http = require('http');
+const opn = require('opn');
 const app = require('../src/app');
 
 /**
@@ -87,6 +88,7 @@ function onListening() {
 
 function onServerStart() {
   console.log(`\n   App running at:    http://localhost:${port}\n`);
+  opn(`http://localhost:${port}`);
 }
 
 /**

@@ -13,7 +13,7 @@
     <span class="todo-title">{{todo.title}}</span>
     <span class="tools">
       <i class="icon icon-edit hover" @click="$emit('edit-todo', todo)"></i>
-      <i class="icon icon-remove hover" @click="$emit('remove-todo', todo)"></i>
+      <i class="icon icon-remove hover" @click="handleRemove"></i>
       <i class="icon icon-more"></i>
     </span>
   </template>
@@ -25,6 +25,13 @@ export default {
   props: {
     todo: Object,
     isEditing: Boolean,
+  },
+
+  methods: {
+    handleRemove() {
+      this.$emit('end-editing');
+      this.$emit('remove-todo', this.todo);
+    }
   },
 };
 </script>
