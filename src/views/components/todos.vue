@@ -26,6 +26,8 @@
       ></todo-term>
     </ul>
   </div>
+
+  <google-calendar></google-calendar>
 </div>
 </template>
 
@@ -34,6 +36,7 @@ import axios from 'axios';
 import Datepicker from 'vuejs-datepicker';
 import NewTodo from './newTodo.vue';
 import TodoTerm from './todoTerm.vue';
+import GoogleCalendar from './googCalendar.vue';
 
 const TIME_ZONE_OFFSET = new Date().getTimezoneOffset() * 60000; // in milliseconds
 
@@ -43,6 +46,7 @@ export default {
     Datepicker,
     NewTodo,
     TodoTerm,
+    GoogleCalendar,
   },
 
   data() {

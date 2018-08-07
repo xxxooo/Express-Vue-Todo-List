@@ -22,3 +22,6 @@ yarn-error.log*
 *.njsproj
 *.sln
 *.sw*
+
+# not commit db changes
+/src/db/*.sqlite
