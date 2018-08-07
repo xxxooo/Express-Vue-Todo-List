@@ -4,7 +4,7 @@
     class="new-todo"
     autofocus autocomplete="off"
     placeholder="What needs to be done?"
-    v-model="mutableTitle"
+    v-model="title"
     @keyup.enter="addTodo"
     @focus="$emit('input-focus')"
   >
@@ -12,25 +12,23 @@
 </template>
 
 <script>
-export default {
-  props: {
-    todoTitle: String,
-  },
+import Datepicker from 'vuejs-datepicker';
 
+export default {
   data() {
     return {
-      mutableTitle: this.todoTitle,
+      title: '',
     };
   },
 
   methods: {
     addTodo() {
-      const value = this.mutableTitle && this.mutableTitle.trim();
+      const value = this.title && this.title.trim();
       if (!value) {
         return;
       }
-      this.$emit('add-todo', this.mutableTitle);
-      this.mutableTitle = '';
+      this.$emit('add-todo', value);
+      this.title = '';
     },
   },
 };

@@ -24,10 +24,12 @@ function checkIDExist(req, res, next) {
     });
 }
 
-// READ all todos.
+// READ all todos
 router.get('/', (req, res) => {
   Todo
-    .findAll()
+    .findAll({
+      attributes: ['id', 'title', 'date', 'completed'],
+    })
     .then((todos) => {
       res.status(200).json(todos);
     })
@@ -41,22 +43,38 @@ router.post('/', (req, res) => {
   Todo
     .create({
       title: req.body.title,
-      completed: req.body.completed,
+      detail: req.body.detail,
       creator: req.body.creator,
-    }).then((book) => {
-      res.status(200).json(book);
+      date: req.body.date,
+      completed: req.body.completed,
+    }).then((todo) => {
+      res.status(200).json(todo);
     }).error((err) => {
       res.status(405).json(err);
     });
 });
 
+// READ todo
+router.get('/:id', [checkIDInput, checkIDExist], (req, res) => {
+  Todo
+    .findById(req.params.id)
+    .then((todo) => {
+      res.status(200).json(todo);
+    })
+    .error((err) => {
+      res.status(405).json(err);
+    });
+});
+
 // UPDATE todo
-router.put('/:id', [checkIDInput, checkIDExist], (req, res) => {
+router.patch('/:id', [checkIDInput, checkIDExist], (req, res) => {
   Todo
     .update({
       title: req.body.title,
-      completed: req.body.completed,
+      detail: req.body.detail,
       creator: req.body.creator,
+      date: req.body.date,
+      completed: req.body.completed,
     }, {
       where: { id: req.params.id },
     })
