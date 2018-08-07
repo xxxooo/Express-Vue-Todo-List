@@ -306,5 +306,17 @@ $color-gray20: #333;
   &-remove {
     background-image: url(/imgs/icons/delete.svg);
   }
+
+  &-sync {
+    background-image: url(/imgs/icons/sync.svg);
+  }
+
+  &-authorize {
+    background-image: url(/imgs/icons/user-circle.svg);
+  }
+
+  &-sign-out {
+    background-image: url(/imgs/icons/user-slash.svg);
+  }
 }
 </style>

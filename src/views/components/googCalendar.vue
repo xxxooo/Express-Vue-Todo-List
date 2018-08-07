@@ -1,14 +1,19 @@
 <template>
-<div class="google">
-  <h3>API</h3>
+<div>
   <div class="button-field">
-    <button @click="handleClientLoad">Client Load</button>
-    <button v-if="isSignedIn" @click="handleSignoutClick">Sign Out</button>
-    <button v-else @click="handleAuthClick">Authorize</button>
-    <button @click="listUpcomingEvents">listUpcomingEvents</button>
-    <button @click="insertEvent">insertEvent</button>
+    <button @click="syncTodos" :disabled="!isSignedIn">
+      <i class="icon icon-sync"></i>
+      Sync with Google Calendar
+    </button>
+    <button v-if="isSignedIn" :disabled="isSync" @click="handleSignoutClick">
+      <i class="icon icon-sign-out"></i>
+      Sign Out
+    </button>
+    <button v-else @click="handleAuthClick">
+      <i class="icon icon-authorize"></i>
+      Authorize
+    </button>
   </div>
-  <div class="content">{{content}}</div>
 </div>
 </template>
 
@@ -21,10 +26,14 @@ const SCOPES = 'https://www.googleapis.com/auth/calendar';
 const calendarId = 'primary';
 
 export default {
+  props: {
+    todos: Array,
+  },
+
   data() {
     return {
-      content: '',
       isSignedIn: false,
+      isSync: false,
     }
   },
 
@@ -39,10 +48,6 @@ export default {
 
     updateSigninStatus(val) {
       this.isSignedIn = val;
-    },
-
-    handleClientLoad() {
-      gapi.load('client:auth2', this.initClient);
     },
 
     /**
@@ -66,33 +71,21 @@ export default {
         });
     },
 
-    listUpcomingEvents() {
-      gapi.client.calendar.events
-        .list({
-          calendarId,
-          'timeMin': (new Date()).toISOString(),
-          'showDeleted': false,
-          'singleEvents': true,
-          'maxResults': 10,
-          'orderBy': 'startTime'
-        })
-        .then((response) => {
-          const events = response.result.items;
-          console.log('--- calendar.events.list ---');
-          console.log(response);
-        });
+    handleError(error) {
+      console.log(error);
     },
 
-    insertEvent() {
+    insertEvent(todo) {
       const resource = {
-        'summary': 'Google I/O 2015',
-        'description': 'A chance to hear more about Google\'s developer products.',
-        'start': {
-          'date': '2015-05-28',
+        summary: todo.title,
+        description: todo.detail,
+        start: {
+          dateTime: `${todo.date}T00:00:00+08:00`,
         },
-        'end': {
-          'date': '2015-05-28',
-        }
+        end: {
+          dateTime: `${todo.date}T23:59:59+08:00`,
+        },
+        transparency: todo.completed ? 'transparent' : 'opaque',
       };
 
       gapi.client.calendar.events
@@ -102,17 +95,97 @@ export default {
         })
         .then((response) => {
           console.log('--- calendar.events.insert ---');
-          console.log(response);
-        });
-    }
+          const event = response.result;
+          console.log(event);
+          this.$emit('update-todo', {
+            id: todo.id,
+            creator: event.creator.displayName,
+            eventId: event.id,
+          });
+        })
+        .catch(this.handleError);
+    },
+
+    getEventSync(todo) {
+      gapi.client.calendar.events
+        .get({
+          calendarId,
+          eventId: todo.eventId
+        })
+        .then((response) => {
+          console.log('--- calendar.events.get ---');
+          const event = response.result;
+          const eventTodo = {
+            id: todo.id,
+            title: event.summary,
+            detail: event.description,
+            creator: event.creator.displayName,
+            date: event.start.dateTime.substr(0,10),
+            completed: event.transparency && event.transparency === 'transparent',
+            eventId: event.id,
+          }
+          this.$emit('update-todo', eventTodo);
+        })
+        .catch(this.handleError);
+    },
+
+    syncTodos() {
+      this.todos.forEach((todo) => {
+        if (!todo.eventId) {
+          this.insertEvent(todo);
+        } else {
+          this.getEventSync(todo);
+        }
+      });
+    },
   },
+
+  mounted() {
+    gapi.load('client:auth2', this.initClient);
+  }
 }
 </script>
 
 <style lang="scss">
-.google {
-  width: 40%;
-  margin: auto;
+$color-white: #fff;
+$color-gray50: #777;
+
+.button-field {
+  text-align: center;
+  margin: 3em 0;
+
+  button {
+    display: block;
+    margin: 1.25em auto;
+    height: 2.5em;
+    width: 50%;
+    color: $color-gray50;
+    background: $color-white;
+    outline: none;
+    border: 0;
+    border-radius: 1em;
+    box-shadow: 0.1em 0.2em 0.75em 0.1em rgba(0, 0, 0, 0.05);
+
+    &[disabled] {
+      box-shadow: none;
+      opacity: 0.75;
+    }
+
+    &:hover {
+      box-shadow:
+        0.1em 0.2em 0.5em 0.1em rgba(0, 0, 0, 0.05),
+        0 0.4em 3em 0 rgba(0, 0, 0, 0.1);
+    }
+
+    &:active {
+      box-shadow: 0 0 0.5em 0 rgba(0, 0, 0, 0.05);
+    }
+
+    .icon {
+      vertical-align: middle;
+      margin-right: 0.25em;
+    }
+  }
 }
 </style>
 

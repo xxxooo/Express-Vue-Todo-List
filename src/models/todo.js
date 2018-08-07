@@ -6,5 +6,6 @@ module.exports = (sequelize, Sequalize) => (
     creator: Sequalize.STRING,
     date: Sequalize.STRING,
     completed: Sequalize.BOOLEAN,
+    eventId: Sequalize.STRING,
   })
 );

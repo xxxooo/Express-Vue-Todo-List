@@ -27,7 +27,10 @@
     </ul>
   </div>
 
-  <google-calendar></google-calendar>
+  <google-calendar
+    :todos="todos"
+    @update-todo="updateTodo"
+  ></google-calendar>
 </div>
 </template>
 
@@ -71,7 +74,7 @@ export default {
         .post('/api/todos', {
           title,
           detail: '',
-          creator: navigator.userAgent,
+          creator: 'user',
           date: this.date,
           completed: false,
         })
@@ -143,14 +146,15 @@ $color-main: #00d1b2;
 
 .card {
   background: #fff;
-  width: 40%;
+  width: 50%;
   max-width: 720px;
   margin: auto;
   padding: 2em;
   border-radius: 0.75em;
+  box-sizing: border-box;
   box-shadow:
-    2px 3px 9px 2px rgba(0, 0, 0, 0.05),
-    0 8px 48px 0 rgba(0, 0, 0, 0.1);
+    0.1em 0.2em 0.66em 0.1em rgba(0, 0, 0, 0.05),
+    0 0.5em 4em 0 rgba(0, 0, 0, 0.1);
 }
 
 .todos {

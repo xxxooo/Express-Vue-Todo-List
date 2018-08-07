@@ -28,7 +28,7 @@ function checkIDExist(req, res, next) {
 router.get('/', (req, res) => {
   Todo
     .findAll({
-      attributes: ['id', 'title', 'date', 'completed'],
+      attributes: ['id', 'title', 'date', 'completed', 'eventId'],
     })
     .then((todos) => {
       res.status(200).json(todos);
@@ -75,6 +75,7 @@ router.patch('/:id', [checkIDInput, checkIDExist], (req, res) => {
       creator: req.body.creator,
       date: req.body.date,
       completed: req.body.completed,
+      eventId: req.body.eventId,
     }, {
       where: { id: req.params.id },
     })
