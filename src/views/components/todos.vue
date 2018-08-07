@@ -147,7 +147,6 @@ $color-main: #00d1b2;
 .card {
   background: #fff;
   width: 50%;
-  max-width: 720px;
   margin: auto;
   padding: 2em;
   border-radius: 0.75em;
