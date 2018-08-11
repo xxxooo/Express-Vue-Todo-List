@@ -8,7 +8,7 @@
 
   <div class="card" @click="clearSelected">
     <new-todo
-      @add-todo="addTodo"
+      :picker-date="date"
       @input-focus="clearSelected"
     ></new-todo>
 
@@ -21,15 +21,12 @@
         :picker-date="date"
         @set-date="setDate"
         @select-todo="selectTodo"
-        @update-todo="updateTodo"
-        @remove-todo="removeTodo"
       ></todo-term>
     </ul>
   </div>
 
   <google-calendar
     :todos="todos"
-    @update-todo="updateTodo"
   ></google-calendar>
 </div>
 </template>
@@ -44,7 +41,6 @@ import GoogleCalendar from './googCalendar.vue';
 const TIME_ZONE_OFFSET = new Date().getTimezoneOffset() * 60000; // in milliseconds
 
 export default {
-/* eslint-disable no-param-reassign */
   components: {
     Datepicker,
     NewTodo,
@@ -72,22 +68,13 @@ export default {
   },
 
   methods: {
-    addTodo(title) {
-      this.$store.dispatch('addTodo', {
-        title,
-        detail: '',
-        creator: 'user',
-        date: this.date,
-        completed: false,
-      });
-    },
-
     getTodoDetail(todo) {
       this.$store.dispatch('getTodoDetail', todo);
     },
 
     selectTodo(todo) {
       this.selectedId = (this.selectedId === todo.id) ? null : todo.id;
+      this.setDate(todo.date);
 
       if (this.selectedId && !todo.updatedAt) {
         this.getTodoDetail(todo);
@@ -107,17 +94,12 @@ export default {
     },
 
     removeTodo(todo) {
-      const idx = this.todos.indexOf(todo);
-      this.todos.splice(idx, 1);
-    },
-
-    handleError(error) {
-      console.log(error);
+      this.$store.dispatch('removeTodo', todo);
     },
   },
 
   mounted() {
-    this.$store.dispatch('setAllTodos');
+    this.$store.dispatch('getAllTodos');
   }
 };
 </script>

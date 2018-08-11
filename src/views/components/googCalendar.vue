@@ -97,11 +97,12 @@ export default {
           console.log('--- calendar.events.insert ---');
           const event = response.result;
           console.log(event);
-          this.$emit('update-todo', {
+          const partialTodo = {
             id: todo.id,
             creator: event.creator.displayName,
             eventId: event.id,
-          });
+          };
+          this.$store.dispatch('updateTodo', partialTodo);
         })
         .catch(this.handleError);
     },
@@ -124,7 +125,7 @@ export default {
             completed: event.transparency && event.transparency === 'transparent',
             eventId: event.id,
           }
-          this.$emit('update-todo', eventTodo);
+          this.$store.dispatch('updateTodo', eventTodo);
         })
         .catch(this.handleError);
     },

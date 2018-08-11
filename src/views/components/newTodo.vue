@@ -15,6 +15,10 @@
 import Datepicker from 'vuejs-datepicker';
 
 export default {
+  props: {
+    pickerDate: String,
+  },
+
   data() {
     return {
       title: '',
@@ -27,7 +31,15 @@ export default {
       if (!value) {
         return;
       }
-      this.$emit('add-todo', value);
+      const newTodo = {
+        title: value,
+        detail: '',
+        creator: 'user',
+        date: this.pickerDate,
+        completed: false,
+      };
+
+      this.$store.dispatch('addTodo', newTodo);
       this.title = '';
     },
   },

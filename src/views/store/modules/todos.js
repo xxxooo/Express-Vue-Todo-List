@@ -12,16 +12,44 @@ export default {
   getters: {},
 
   mutations: {
-    //
+    SET_ALL_TODOS(state, payload) {
+      state.all = payload.todos;
+    },
+
+    ADD_TODO(state, payload) {
+      state.all.push(payload.todo);
+    },
+
+    UPDATE_TODO(state, payload) {
+      const index = state.all
+        .map(todo => todo.id)
+        .indexOf(payload.todo.id);
+
+      if (index !== -1) {
+        state.all = state.all.map((todo, idx) => (
+          (idx === index) ? payload.todo : todo
+        ));
+      }
+    },
+
+    DELETE_TODO(state, payload) {
+      const index = state.all
+        .map(todo => todo.id)
+        .indexOf(payload.todo.id);
+
+      if (index !== -1) {
+        state.all.splice(index, 1);
+      }
+    },
   },
 
   actions: {
-    setAllTodos({ commit }) {
+    getAllTodos({ commit }) {
       axios
         .get('/api/todos')
         .then((response) => {
           commit({
-            type: 'setAllTodos',
+            type: 'SET_ALL_TODOS',
             todos: response.data,
           });
         })
@@ -33,7 +61,7 @@ export default {
         .post('/api/todos', todo)
         .then((response) => {
           commit({
-            type: 'addTodo',
+            type: 'ADD_TODO',
             todo: response.data,
           });
         })
@@ -44,23 +72,31 @@ export default {
       axios
         .get(`/api/todos/${todo.id}`)
         .then((response) => {
-          // const idx = this.todos.indexOf(todo);
-          // this.todos[idx] = response.data;
-
           commit({
-            type: 'getTodoDetail',
+            type: 'UPDATE_TODO',
             todo: response.data,
           });
-          // this.$forceUpdate();
         })
         .catch(handleError);
     },
 
-    updateTodo({ commit }, todo) {
+    updateTodo({ dispatch }, todo) {
       axios
         .patch(`/api/todos/${todo.id}`, todo)
-        .then((response) => {
-          // this.getTodoDetail(todo);
+        .then(() => {
+          dispatch('getTodoDetail', todo);
+        })
+        .catch(handleError);
+    },
+
+    removeTodo({ commit }, todo) {
+      axios
+        .delete(`/api/todos/${todo.id}`)
+        .then(() => {
+          commit({
+            type: 'DELETE_TODO',
+            todo,
+          });
         })
         .catch(handleError);
     },
