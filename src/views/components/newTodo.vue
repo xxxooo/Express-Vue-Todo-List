@@ -15,6 +15,10 @@
 import Datepicker from 'vuejs-datepicker';
 
 export default {
+  props: {
+    pickerDate: String,
+  },
+
   data() {
     return {
       title: '',
@@ -27,7 +31,15 @@ export default {
       if (!value) {
         return;
       }
-      this.$emit('add-todo', value);
+      const newTodo = {
+        title: value,
+        detail: '',
+        creator: 'user',
+        date: this.pickerDate,
+        completed: false,
+      };
+
+      this.$store.dispatch('addTodo', newTodo);
       this.title = '';
     },
   },
@@ -36,8 +48,8 @@ export default {
 
 <style lang="scss">
 .new-todo-field {
-  padding: 0 1em 1px;
-  border-bottom: 1px solid #d9d9d9;
+  padding: 0 1em;
+  border-bottom: 0.08em solid #d9d9d9;
   margin-bottom: 0.5em;
 
   .new-todo {
@@ -45,6 +57,7 @@ export default {
     height: 3em;
     border: none;
     outline: none;
+    background: transparent;
   }
 }
 </style>

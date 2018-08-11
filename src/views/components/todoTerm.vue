@@ -12,26 +12,28 @@
       <i v-if="isEditing" class="icon icon-editing" @click="endEdit"></i>
       <template v-else>
         <i class="icon icon-edit hover" @click="edit"></i>
-        <i class="icon icon-remove hover" @click="handleRemove"></i>
+        <i class="icon icon-remove hover" @click="remove"></i>
         <i class="icon icon-more"></i>
       </template>
     </span>
     <span class="todo-check" @click.stop="toggleCompleted">
       <i class="icon icon-check"></i>
     </span>
-    <span class="todo-date" @click="$emit('select-todo', todo)">{{todo.date}}</span>
-    <div class="todo-title">
-      <input type="text" v-model="todo.title" :disabled="!isEditing">
-    </div>
-    <div class="todo-detail">
-      <textarea v-model="todo.detail" :disabled="!isEditing"></textarea>
+    <span class="todo-date" @click="handleSelect">{{todo.date}}</span>
+    <div @dblclick.stop="edit">
+      <div class="todo-title">
+        <input type="text" v-model="localTodo.title" :disabled="!isEditing">
+      </div>
+      <div class="todo-detail">
+        <textarea v-model="localTodo.detail" :disabled="!isEditing"></textarea>
+      </div>
     </div>
     <div class="todo-updated-time">
       <span>{{updatedTime}} updated</span>
     </div>
   </div>
   <div v-else
-    @click="$emit('select-todo', todo)"
+    @click="handleSelect"
   >
     <span class="todo-check" @click.stop="toggleCompleted">
       <i class="icon icon-check"></i>
@@ -43,8 +45,6 @@
 </template>
 
 <script>
-import axios from 'axios';
-
 const TIME_ZONE_OFFSET = new Date().getTimezoneOffset() * 60000; // in milliseconds
 
 export default {
@@ -56,6 +56,7 @@ export default {
 
   data() {
     return {
+      localTodo: {},
       isEditing: false,
     }
   },
@@ -69,7 +70,9 @@ export default {
     },
 
     isSelected(val) {
-      if (!val && this.isEditing) {
+      if (val) {
+        this.localTodo = Object.assign({}, this.todo);
+      } else if (this.isEditing) {
         this.endEdit();
       }
     },
@@ -85,16 +88,16 @@ export default {
   },
 
   methods: {
+    handleSelect() {
+      this.$emit('select-todo', this.todo);
+    },
+
     toggleCompleted() {
-      axios
-        .patch(`/api/todos/${this.todo.id}`, {
-          completed: !this.todo.completed,
-        })
-        .then((response) => {
-          this.todo.completed = !this.todo.completed;
-          this.$forceUpdate();
-        })
-        .catch(this.handleError);
+      const partialTodo = {
+        id: this.todo.id,
+        completed: !this.todo.completed,
+      };
+      this.$store.dispatch('updateTodo', partialTodo);
     },
 
     edit() {
@@ -104,16 +107,15 @@ export default {
 
     endEdit() {
       this.isEditing = false;
-      this.$emit('update-todo', this.todo);
+      this.$store.dispatch('updateTodo', this.localTodo);
+    },
+
+    remove() {
+      this.$store.dispatch('removeTodo', this.todo);
     },
 
     handleError(error) {
       console.log(error);
-    },
-
-    handleRemove() {
-      this.$emit('end-editing');
-      this.$emit('remove-todo', this.todo);
     },
   },
 };
@@ -131,11 +133,12 @@ $color-gray20: #333;
 
 .todo {
   position: relative;
+  margin: 0.5em 0;
   line-height: 1.5;
   border-radius: 0.75em;
 
   > div {
-    padding: 0.5em 0 0.5em 1em;
+    padding: 0.25em 0 0.25em 1em;
   }
 
   &:hover {
@@ -150,7 +153,7 @@ $color-gray20: #333;
     display: inline-block;
     font-size: 0.75em;
     color: $color-gray50;
-    vertical-align: middle;
+    vertical-align: text-top;
     margin: 0 0.25rem;
   }
 
@@ -270,7 +273,7 @@ $color-gray20: #333;
   background-size: auto;
   background-position: center;
   background-repeat: no-repeat;
-  vertical-align: middle;
+  vertical-align: text-bottom;
   opacity: 0.33;
   transition: opacity 0.5s;
   cursor: pointer;
@@ -280,7 +283,7 @@ $color-gray20: #333;
   }
 
   &:active {
-    transform: translateY(1px);
+    transform: translateY(0.1em);
   }
 
   &-check {
