@@ -35,7 +35,7 @@
 </template>
 
 <script>
-import axios from 'axios';
+import { mapState } from 'vuex'
 import Datepicker from 'vuejs-datepicker';
 import NewTodo from './newTodo.vue';
 import TodoTerm from './todoTerm.vue';
@@ -55,12 +55,15 @@ export default {
   data() {
     return {
       dateRaw: new Date(new Date().toDateString()),
-      todos: [],
       selectedId: null,
     };
   },
 
   computed: {
+    ...mapState({
+      todos: state => state.todos.all,
+    }),
+
     date() {
       return new Date(this.dateRaw - TIME_ZONE_OFFSET)
         .toISOString()
@@ -70,29 +73,17 @@ export default {
 
   methods: {
     addTodo(title) {
-      axios
-        .post('/api/todos', {
-          title,
-          detail: '',
-          creator: 'user',
-          date: this.date,
-          completed: false,
-        })
-        .then((response) => {
-          this.todos.push(response.data);
-        })
-        .catch(this.handleError);
+      this.$store.dispatch('addTodo', {
+        title,
+        detail: '',
+        creator: 'user',
+        date: this.date,
+        completed: false,
+      });
     },
 
     getTodoDetail(todo) {
-      axios
-        .get(`/api/todos/${todo.id}`)
-        .then((response) => {
-          const idx = this.todos.indexOf(todo);
-          this.todos[idx] = response.data;
-          this.$forceUpdate();
-        })
-        .catch(this.handleError);
+      this.$store.dispatch('getTodoDetail', todo);
     },
 
     selectTodo(todo) {
@@ -104,12 +95,7 @@ export default {
     },
 
     updateTodo(todo) {
-      axios
-        .patch(`/api/todos/${todo.id}`, todo)
-        .then((response) => {
-          this.getTodoDetail(todo);
-        })
-        .catch(this.handleError);
+      this.$store.dispatch('updateTodo', todo);
     },
 
     clearSelected() {
@@ -131,12 +117,7 @@ export default {
   },
 
   mounted() {
-    axios
-      .get('/api/todos')
-      .then(response => {
-        this.todos = response.data;
-      })
-      .catch(this.handleError);
+    this.$store.dispatch('setAllTodos');
   }
 };
 </script>
@@ -186,10 +167,6 @@ $color-main: #00d1b2;
       height: 2em;
       line-height: 2em;
       box-sizing: border-box;
-
-      &:hover {
-        border-width: 2px;
-      }
 
       &.day-header {
         width: 2.666em;

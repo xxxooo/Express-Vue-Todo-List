@@ -280,7 +280,7 @@ $color-gray20: #333;
   }
 
   &:active {
-    transform: translateY(1px);
+    transform: translateY(0.1em);
   }
 
   &-check {

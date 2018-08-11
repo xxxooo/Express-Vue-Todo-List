@@ -36,8 +36,8 @@ export default {
 
 <style lang="scss">
 .new-todo-field {
-  padding: 0 1em 1px;
-  border-bottom: 1px solid #d9d9d9;
+  padding: 0 1em;
+  border-bottom: 0.08em solid #d9d9d9;
   margin-bottom: 0.5em;
 
   .new-todo {
@@ -45,6 +45,7 @@ export default {
     height: 3em;
     border: none;
     outline: none;
+    background: transparent;
   }
 }
 </style>
