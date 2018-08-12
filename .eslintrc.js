@@ -4,9 +4,12 @@ module.exports = {
     'plugin:vue/essential',
   ],
   globals: {
-    window: true,
-    document: true,
+    window: false,
+    document: false,
     gapi: false,
+  },
+  env: {
+    jest: true,
   },
   rules: {
     'no-param-reassign': [

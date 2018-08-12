@@ -4,6 +4,7 @@
   "private": true,
   "scripts": {
     "start": "nodemon ./bin/www",
+    "test": "jest",
     "eslint": "eslint src/**/*.{js,vue} --fix"
   },
   "dependencies": {
@@ -27,15 +28,22 @@
     "vuex": "^3.0.1"
   },
   "devDependencies": {
+    "@vue/test-utils": "^1.0.0-beta.24",
+    "babel-core": "^6.26.3",
+    "babel-jest": "^23.4.2",
+    "babel-plugin-transform-es2015-modules-commonjs": "^6.26.2",
+    "babel-preset-es2017": "^6.24.1",
     "css-hot-loader": "^1.4.1",
     "css-loader": "^1.0.0",
     "eslint": "^5.2.0",
     "eslint-config-airbnb-base": "^13.0.0",
     "eslint-plugin-import": "^2.13.0",
     "eslint-plugin-vue": "^4.7.1",
+    "jest": "^23.5.0",
     "mini-css-extract-plugin": "^0.4.1",
     "nodemon": "^1.18.3",
     "sass-loader": "^7.1.0",
+    "vue-jest": "^2.6.0",
     "vue-loader": "^15.2.6",
     "webpack": "^4.16.4",
     "webpack-dev-middleware": "^3.1.3",
