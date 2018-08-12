@@ -12,10 +12,12 @@ describe('components/newTodo.vue', () => {
   const actions = {
     addTodo: jest.fn(),
   };
+
   const store = new Vuex.Store({
     state: {},
     actions,
   });
+
   const defaultTitle = '';
   const title = 'new event title';
 
